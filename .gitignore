@@ -6,3 +6,4 @@ tmp/
 result/
 *.env
 *.secret
+/.pre-commit-config.yaml

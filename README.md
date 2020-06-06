@@ -24,4 +24,3 @@ My roadmap to making a good use out of NixOps
   - [ ] Using a custom structure that exposes a `comment = types.str;` alongside
         preprocessing to remove the comments
   - [ ] Dynamically generate the documentation
-  - [ ] 

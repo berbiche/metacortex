@@ -9,7 +9,7 @@ let
       nixpkgs-fmt.enable = true;
       shellCheck.enable = false; # Not working
     };
-    excludes = [ "nix/sources.nix$" ];
+    excludes = [ "nix/sources.nix$" "shell.nix" ];
   };
 in
 pkgs.mkShell {

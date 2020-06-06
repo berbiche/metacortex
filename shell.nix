@@ -7,7 +7,7 @@ let
     inherit src;
     hooks = {
       nixpkgs-fmt.enable = true;
-      shellCheck.enable = false; # Not working
+      shellcheck.enable = true;
     };
     excludes = [ "nix/sources.nix$" "shell.nix$" ];
   };

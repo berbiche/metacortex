@@ -1,4 +1,6 @@
 #! /usr/bin/env bash
+set -euo pipefail
+
 echo '
 THIS IS THE INITIAL SETUP FILE FOR THE "niobe" HOST
 
@@ -10,6 +12,14 @@ This script accept the DISK environment variable to define where to setup:
 1. GPT table (which will effectively wipe the disk partition table)
 2. Disk partitions (boot and root)
 3. Filesystems (boot and root)
+
+A configuration.nix file can be uploaded in the same folder as this script,
+otherwise a default configuration file will be created.
+
+The default configuration created enables OpenSSH on port 22.
+The device is available at 172.31.10.15.
+
+The default password for root is "root".
 
 Current date: '"$(date +'%x')"
 
@@ -51,11 +61,35 @@ mount /dev/disk/by-label/boot /mnt/boot
 
 echo "5. Installing NixOS"
 mkdir -p /mnt/etc/nixos
-if [ -f "configuration.nix" ]; then
-    cp -v configuration.nix /mnt/etc/nixos/configuration.nix
-    nixos-rebuild boot --upgrade
-else
-    >&2 echo "Missing configuration.nix file, cannot build"
-    nixos-generate-config --root /mnt
-    exit 1
+if [ ! -f "configuration.nix" ]; then
+    >&2 echo "Missing configuration.nix file. Creating a default configuration.nix"
+    cat >configuration.nix <<-EOF
+    { config, pkgs, ... }:
+    {
+        imports = [ ./hardware-configuration.nix ];
+
+        system.stateVersion = "20.09";
+        boot.loader.systemd-boot.enable = true;
+        boot.loader.efi.canTouchEfiVariables = true;
+        networking.hostName = "temporary";
+
+        networking.useDHCP = false;
+        networking.interfaces.enp1s0.addresses = [ { address = "172.31.10.15"; prefixLength = 16; } ];
+
+        networking.firewall.enable = true;
+        networking.firewall.allowPing = true;
+        networking.firewall.allowedTCPPorts = [ 22 ];
+
+        services.openssh.enable = true;
+        services.openssh.passwordAuthentication = true;
+        services.openssh.permitRootLogin = "yes";
+
+        users.users.root.initialPassword = "root";
+    }
+EOF
 fi
+cp -v configuration.nix /mnt/etc/nixos/configuration.nix
+nixos-generate-config --root /mnt
+
+echo "6. Building NixOS"
+nixos-rebuild boot --upgrade

@@ -11,8 +11,10 @@ let
     };
     excludes = [ "nix/sources.nix$" "shell.nix$" ];
   };
+
+  nixops = (import sources.nixops { }).build.x86_64-linux;
 in
 pkgs.mkShell {
   inherit (pre-commit-hook) shellHook;
-  buildInputs = [ pkgs.nixops ];
+  buildInputs = [ nixops ];
 }

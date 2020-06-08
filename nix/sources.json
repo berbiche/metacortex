@@ -23,6 +23,19 @@
         "url": "https://github.com/nmattia/niv/archive/f73bf8d584148677b01859677a63191c31911eae.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     },
+    "nixops": {
+        "branch": "master",
+        "description": "NixOps is a tool for deploying to NixOS machines in a network or cloud.",
+        "homepage": "https://nixos.org/nixops",
+        "owner": "NixOS",
+        "repo": "nixops",
+        "rev": "0fc0434250e9855ee9239bc48d87e7a31ed433e8",
+        "sha256": "0mc4gs4q6jbfhm6scvyj12sddj7znvwayclsf0l1rjyl1daa9h0v",
+        "type": "tarball",
+        "url": "https://github.com/NixOS/nixops/archive/0fc0434250e9855ee9239bc48d87e7a31ed433e8.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz",
+        "version": "v1.7"
+    },
     "nixpkgs": {
         "branch": "nixpkgs-unstable",
         "description": "A read-only mirror of NixOS/nixpkgs tracking the released channels. Send issues and PRs to",

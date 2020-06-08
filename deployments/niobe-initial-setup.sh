@@ -1,5 +1,9 @@
 #! /usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+
+DISK=${DISK:-/dev/sda}
+
+trap "echo 'Error: exiting script'" ERR
 
 echo '
 THIS IS THE INITIAL SETUP FILE FOR THE "niobe" HOST
@@ -23,7 +27,7 @@ The default password for root is "root".
 
 Current date: '"$(date +'%x')"
 
-if [ ! "x$1" == "x1" ]; then
+if [ ! "x$1" == "xyes" ]; then
     echo "Do you wish to proceed and clean up the filesystem?"
     select yn in "Yes" "No"; do
         case $yn in
@@ -33,35 +37,36 @@ if [ ! "x$1" == "x1" ]; then
     done
 fi
 
-echo "1. Proceeding with installation."
 
-DISK=${DISK:-/dev/sda}
-
-echo "2. Initializing drive partition on disk ${DISK}"
-umount ${DISK}*
+echo "Proceeding with installation."
+echo "1. Initializing drive partition on disk ${DISK}"
+umount ${DISK}* || true
 wipefs -a $DISK
 parted $DISK -- mklabel gpt
 parted $DISK -- mkpart ESP fat32 1MiB 512MiB
 parted $DISK -- mkpart primary 512MiB 100%
-parted $DISK -- set boot on 1
+parted $DISK -- print
+partprobe $DISK
+parted $DISK -- set 1 boot on
 lsblk -f $DISK
 
 # Create filesystem
-echo "3. Creating FS"
+echo "2. Creating FS"
 mkfs.ext4 -L nixos ${DISK}2
 mkfs.fat -F 32 -n boot ${DISK}1
+partprobe $DISK
 lsblk -f $DISK
 
 # Mount and install
-echo "4. Mounting FS"
-mkdir /mnt
+echo "3. Mounting FS"
+mkdir -p /mnt
 mount /dev/disk/by-label/nixos /mnt
 mkdir -p /mnt/boot
 mount /dev/disk/by-label/boot /mnt/boot
 
-echo "5. Installing NixOS"
+echo "4. Installing NixOS"
 mkdir -p /mnt/etc/nixos
-if [ ! -f "configuration.nix" ]; then
+if [[ ! -f "configuration.nix" ]]; then
     >&2 echo "Missing configuration.nix file. Creating a default configuration.nix"
     cat >configuration.nix <<-EOF
     { config, pkgs, ... }:
@@ -70,11 +75,11 @@ if [ ! -f "configuration.nix" ]; then
 
         system.stateVersion = "20.09";
         boot.loader.systemd-boot.enable = true;
-        boot.loader.efi.canTouchEfiVariables = true;
+        boot.loader.efi.canTouchEfiVariables = false;
         networking.hostName = "temporary";
 
         networking.useDHCP = false;
-        networking.interfaces.enp1s0.addresses = [ { address = "172.31.10.15"; prefixLength = 16; } ];
+        networking.interfaces.enp1s0.ipv4.addresses = [ { address = "172.31.10.15"; prefixLength = 16; } ];
 
         networking.firewall.enable = true;
         networking.firewall.allowPing = true;
@@ -88,8 +93,19 @@ if [ ! -f "configuration.nix" ]; then
     }
 EOF
 fi
-cp -v configuration.nix /mnt/etc/nixos/configuration.nix
+mv -v configuration.nix /mnt/etc/nixos/configuration.nix
 nixos-generate-config --root /mnt
 
-echo "6. Building NixOS"
-nixos-rebuild boot --upgrade
+echo "5. Building NixOS"
+if [[ ! "x$1" == "xyes" ]]; then
+    echo "Do you wish to proceed and clean up the filesystem?"
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) break;;
+            No )
+                echo "Not building NixOS"
+                exit;;
+        esac
+    done
+fi
+nixos-install --no-root-passwd --root /mnt

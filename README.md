@@ -43,3 +43,5 @@ My roadmap to making a good use out of NixOps
 - [Writing NixOS Modules](https://nixos.org/nixos/manual/index.html#sec-writing-modules)
 - [Discovering Nix: Provisioning a static webserver with NixOps](https://sevdev.hu/posts/2017-12-26-discovering-nix-deploying-a-simple-nginx-with-nixops.html)
 - [NixOps deployment configuration for IOHK devops](https://github.com/input-output-hk/iohk-ops)
+- [krops vs. NixOps](https://tech.ingolf-wagner.de/nixos/krops/)
+- [Secure, Declarative Key Management with NixOps, Pass, and nix-plugins](https://elvishjerricco.github.io/2018/06/24/secure-declarative-key-management.html)

@@ -57,6 +57,14 @@ in
     matchConfig = { MACAddress = lan1-MAC; };
     linkConfig = { Name = eth-outside-world; };
   };
+  systemd.network.networks."10-${eth-outside-world}" = {
+    matchConfig = { Name = eth-outside-world; };
+    DHCP = true;
+    dhcpV4Config = {
+      SendHostname = false;
+      UseDNS = false;
+    };
+  };
   systemd.network.links."10-lan10" = {
     matchConfig = { MACAddress = lan10-MAC; };
     linkConfig = { Name = "lan10"; };

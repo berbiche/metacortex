@@ -12,6 +12,16 @@ I'm learning NixOps so the code quality (code reuse, layout strategy, etc.) is m
 - `nix` - NixOS package source managed using Niv
 - `roles` - Contains definitions of specific roles a `host` can have
 
+## Commands
+
+Usage of the provided `shell.nix` using either `nix-shell` or `lorri` is recommended.
+
+The NIX_PATH environment variable is modified to add a custom root path for use with imports.
+
+### Deploy
+
+TODO
+
 ## Things to Learn
 
 My roadmap to making a good use out of NixOps
@@ -37,6 +47,10 @@ My roadmap to making a good use out of NixOps
   - [ ] Dynamically generate the documentation
   - [ ] ???
 
+## Helpful commands
+
+- Debug systemd-networkd links/networks configuration: `SYSTEMD_LOG_LEVEL=debug udevadm test-builtin net_setup_link /sys/class/net/${DEVICE}`
+
 ## Links
 
 - [The nixops defaults module](https://nixos.mayflower.consulting/blog/2018/11/08/the-nixops-default-module/)
@@ -45,3 +59,6 @@ My roadmap to making a good use out of NixOps
 - [NixOps deployment configuration for IOHK devops](https://github.com/input-output-hk/iohk-ops)
 - [krops vs. NixOps](https://tech.ingolf-wagner.de/nixos/krops/)
 - [Secure, Declarative Key Management with NixOps, Pass, and nix-plugins](https://elvishjerricco.github.io/2018/06/24/secure-declarative-key-management.html)
+- [How to set persistent NIC device name via udev](https://access.redhat.com/solutions/112643)
+- [Network Interface Names](https://wiki.debian.org/NetworkInterfaceNames#CUSTOM_SCHEMES_USING_.LINK_FILES)
+- [NixOps - Managing Keys](https://releases.nixos.org/nixops/nixops-1.7/manual/manual.html#idm140737322342384)

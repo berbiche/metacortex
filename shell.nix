@@ -12,9 +12,12 @@ let
     excludes = [ "nix/sources.nix$" "shell.nix$" ];
   };
 
-  nixops = (import sources.nixops { }).build.x86_64-linux;
+  nixops = (import sources.nixops { });
 in
 pkgs.mkShell {
   inherit (pre-commit-hook) shellHook;
+
+  NIX_PATH = "root=${toString ./.}:${builtins.getEnv("NIX_PATH")}";
+
   buildInputs = [ nixops ];
 }

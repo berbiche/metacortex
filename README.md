@@ -62,3 +62,4 @@ My roadmap to making a good use out of NixOps
 - [How to set persistent NIC device name via udev](https://access.redhat.com/solutions/112643)
 - [Network Interface Names](https://wiki.debian.org/NetworkInterfaceNames#CUSTOM_SCHEMES_USING_.LINK_FILES)
 - [NixOps - Managing Keys](https://releases.nixos.org/nixops/nixops-1.7/manual/manual.html#idm140737322342384)
+- [ArchLinux: systemd-networkd](https://wiki.archlinux.org/index.php/Systemd-networkd)

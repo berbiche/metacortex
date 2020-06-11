@@ -7,6 +7,18 @@ let
     description = "Niobe host configuration";
     type = types.submodule {
       options = {
+        internal0 = mkOption {
+          description = "Name of the default internal interface";
+          default = "internal0";
+          internal = true;
+          readOnly = true;
+        };
+        external0 = mkOption {
+          description = "Name of the default external interface";
+          default = "external0";
+          internal = true;
+          readOnly = true;
+        };
         stateVersion = mkOption {
           description = "The NixOS stateVersion running on the target";
           example = "20.09";

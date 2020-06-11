@@ -6,7 +6,8 @@ let
   lan1-MAC = "7c:d3:0a:25:4c:7f";
   lan10-MAC = "00:e0:4d:3b:fa:b5";
 
-  eth-outside-world = "lan1";
+  external0 = host.external0;
+  internal0 = host.internal0;
 in
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
@@ -53,28 +54,33 @@ in
   # Persistent eth name
   # Enable systemd-networkd
   systemd.network.enable = true;
-  systemd.network.links."10-${eth-outside-world}" = {
+  systemd.network.links."10-${external0}" = {
     matchConfig = { MACAddress = lan1-MAC; };
-    linkConfig = { Name = eth-outside-world; };
+    linkConfig = { Name = external0; };
   };
-  systemd.network.networks."10-${eth-outside-world}" = {
-    matchConfig = { Name = eth-outside-world; };
-    DHCP = true;
+  systemd.network.networks.${external0} = {
+    matchConfig = { Name = external0; };
+    # No ipv6 support from the ISP right now
+    DHCP = "ipv4";
     dhcpV4Config = {
       SendHostname = false;
       UseDNS = false;
     };
   };
-  systemd.network.links."10-lan10" = {
+  systemd.network.links."10-${internal0}" = {
     matchConfig = { MACAddress = lan10-MAC; };
-    linkConfig = { Name = "lan10"; };
+    linkConfig = { Name = internal0; };
   };
-  systemd.network.networks."10-lan10" = {
-    matchConfig = { Name = "lan10"; };
+  systemd.network.networks.${internal0} = {
+    matchConfig = { Name = internal0; };
     address = [
       "${host.ipv4addr}/${toString host.ipv4prefix}"
     ];
-    routes = [ { routeConfig = { Destination = "0.0.0.0/0"; Gateway = host.ipv4gateway; }; } ];
+    routes = [
+      {
+        routeConfig = { Destination = "0.0.0.0/0"; Gateway = host.ipv4gateway; };
+      }
+    ];
   };
   networking.firewall.interfaces.lan10.allowedTCPPorts = [ 22 ];
 

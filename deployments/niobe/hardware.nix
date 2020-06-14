@@ -3,8 +3,8 @@
 let
   host = config.metacortex.host.niobe;
 
-  lan1-MAC = "7c:d3:0a:25:4c:7f";
-  lan10-MAC = "00:e0:4d:3b:fa:b5";
+  external0-MAC = "7c:d3:0a:25:4c:7f";
+  internal0-MAC = "00:e0:4d:3b:fa:b5";
 
   external0 = host.external0;
   internal0 = host.internal0;
@@ -55,7 +55,7 @@ in
   # Enable systemd-networkd
   systemd.network.enable = true;
   systemd.network.links."10-${external0}" = {
-    matchConfig = { MACAddress = lan1-MAC; };
+    matchConfig = { MACAddress = external0-MAC; };
     linkConfig = { Name = external0; };
   };
   systemd.network.networks.${external0} = {
@@ -68,7 +68,7 @@ in
     };
   };
   systemd.network.links."10-${internal0}" = {
-    matchConfig = { MACAddress = lan10-MAC; };
+    matchConfig = { MACAddress = internal0-MAC; };
     linkConfig = { Name = internal0; };
   };
   systemd.network.networks.${internal0} = {
@@ -82,7 +82,7 @@ in
       }
     ];
   };
-  networking.firewall.interfaces.lan10.allowedTCPPorts = [ 22 ];
+  networking.firewall.interfaces.${internal0}.allowedTCPPorts = [ 22 ];
 
   time.timeZone = host.timeZone;
 

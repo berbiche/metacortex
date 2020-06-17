@@ -29,6 +29,10 @@ in
   boot.extraModulePackages = [];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelParams = [
+    "console=tty1"
+    "console=ttyS0,115200"
+  ];
 
   # This is a 4 core machine
   nix.maxJobs = 2;

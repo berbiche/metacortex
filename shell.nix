@@ -12,12 +12,14 @@ let
     excludes = [ "nix/sources.nix$" "shell.nix$" ];
   };
 
-  nixops = (import sources.nixops { });
+  nixops = (import sources.nixops).default;
+
+  path = builtins.getEnv("NIX_PATH");
 in
 pkgs.mkShell {
   inherit (pre-commit-hook) shellHook;
 
-  NIX_PATH = "root=${toString ./.}:${builtins.getEnv("NIX_PATH")}";
+  NIX_PATH = "root=${toString ./.}:nixpkgs=${sources.nixpkgs.outPath}:/nix/var/nix/profiles/per-user/root/channels";
 
   buildInputs = [ nixops ];
 }
